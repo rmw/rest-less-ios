@@ -6,20 +6,72 @@
 //  Copyright (c) 2014 newts. All rights reserved.
 //
 
+
 import UIKit
 
+
+
 class ViewController: UIViewController {
-                            
+    
+    
+    @IBOutlet weak var displayTimeLabel: UILabel!
+    
+    var startTime = NSTimeInterval()
+    var restTime:NSTimeInterval = 90.0
+    var restTimeDate: NSDate!
+    var timer = NSTimer()
+    var accumulatedTime = 0.0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
+        
+        displayTimeLabel.text = secondsToDisplay(restTime)
+        let aSelector : Selector = "updateTime"
 
+        timer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: aSelector, userInfo: nil, repeats: true)
+
+        startTime = NSDate.timeIntervalSinceReferenceDate()
+        restTimeDate = NSDate(timeIntervalSinceNow: restTime - accumulatedTime)
+    }
+    
+    @IBAction func startTimer(sender: AnyObject) {
+        if timer.valid != true {
+
+            let aSelector : Selector = "updateTime"
+            
+            timer = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: aSelector, userInfo: nil, repeats: true)
+            
+            startTime = NSDate.timeIntervalSinceReferenceDate()
+            
+            restTimeDate = NSDate(timeIntervalSinceNow: restTime - accumulatedTime)
+
+        }
+    }
+    
+    @IBAction func pauseTimer(sender: AnyObject) {
+        timer.invalidate()
+    }
+    
+    @IBAction func resetTimer(sender: AnyObject) {
+
+        timer.invalidate()
+        accumulatedTime = 0.0
+        displayTimeLabel.text = secondsToDisplay(restTime)
+
+    }
+    
+
+    func updateTime() {
+        accumulatedTime += timer.timeInterval
+        var elapsedTime: NSTimeInterval = restTimeDate.timeIntervalSinceNow
+
+        displayTimeLabel.text = secondsToDisplay(elapsedTime)
+    }
+    
+    @IBOutlet var exercises: [UIPickerView]!
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
-
+    
 }
-
